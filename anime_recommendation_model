@@ -1,0 +1,34 @@
+import streamlit as st
+import pickle
+
+anime = pickle.load(open('anime.pkl', 'rb'))
+similarity = pickle.load(open('similarities.pkl', 'rb'))
+anime_list = anime['Name'].values
+
+st.header("Anime Recommendation Tool")
+
+anime_name = st.selectbox("Select Anime from Dropdown", anime_list)
+
+
+
+def anime_recommend(name):
+    index = anime[anime['Name']==name].index[0]
+    distance = sorted(list(enumerate(similarity[index])), reverse = True, key = lambda vectors:vectors[1])
+    recommendations = []
+    for i in distance[1:6]:
+        recommendations.append(anime.iloc[i[0]].Name)
+    return recommendations
+
+if st.button("Show Recommendations"):
+    recommended =  anime_recommend(anime_name)
+    col1,col2,col3,col4,col5 = st.columns(5)
+    with col1:
+        st.text(recommended[0])
+    with col2:
+        st.text(recommended[1])
+    with col3:
+        st.text(recommended[2])
+    with col4:
+        st.text(recommended[3])
+    with col5:
+        st.text(recommended[4])
